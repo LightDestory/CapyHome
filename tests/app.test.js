@@ -7,13 +7,14 @@ import { join } from 'node:path';
 import { createApp } from '../server/app.js';
 import { transaction } from '../server/db.js';
 import { date, amount } from '../server/utils/validation.js';
+import { hashPassword } from '../server/utils/passwords.js';
 
 const credentials = { username: 'admin', password: 'a-test-password-123' };
 const roommate = { name: 'Ada', username: 'ada', password: 'another-password-123' };
 const day = '2025-01-15';
 
 async function fixture(options = {}) {
-  const { app, db } = await createApp({ databasePath: ':memory:', adminUsername: credentials.username, adminPassword: credentials.password, cookieSecure: false, trustProxy: false, timeZone: 'Europe/Rome', ...options });
+  const { app, db } = await createApp({ databasePath: ':memory:', adminUsername: credentials.username, adminPassword: await hashPassword(credentials.password), cookieSecure: false, trustProxy: false, timeZone: 'Europe/Rome', ...options });
   const server = app.listen(0, '127.0.0.1');
   await once(server, 'listening');
   const base = `http://127.0.0.1:${server.address().port}`;
@@ -59,6 +60,13 @@ test('requires bootstrap credentials and does not accept the example password', 
   await assert.rejects(createApp({ databasePath: ':memory:', adminUsername: credentials.username, adminPassword: 'replace-with-a-long-unique-password' }), /First startup requires/);
 });
 
+test('rejects a plaintext bootstrap password', async () => {
+  await assert.rejects(
+    createApp({ databasePath: ':memory:', adminUsername: credentials.username, adminPassword: credentials.password }),
+    /SHA-256 password hash/
+  );
+});
+
 test('serves the SPA with security headers, health, and protected API endpoints', () => withApp(async app => {
   const page = await app.request('/');
   assert.equal(page.status, 200);
@@ -101,7 +109,7 @@ test('registration is pending and approval is required; duplicates and invalid i
   assert.equal(stored.role, 'roommate');
   assert.equal(stored.status, 'pending');
   assert.notEqual(stored.passwordHash, roommate.password);
-  assert.match(stored.passwordHash, /^[a-f0-9]{32}:[a-f0-9]{128}$/);
+  assert.match(stored.passwordHash, /^[a-f0-9]{64}$/);
   assert.equal((await app.request('/api/auth/login', { method: 'POST', body: roommate })).status, 403);
   assert.equal((await app.request('/api/auth/login', { method: 'POST', body: { ...roommate, password: 'wrong-password' } })).status, 401);
   assert.equal((await app.request('/api/dashboard', { session: admin })).data.stats.pendingUsers, 1);
@@ -324,7 +332,7 @@ test('persists house, ledger and sessions across application restarts without re
     await app.request('/api/fund', { method: 'POST', body: { type: 'contribution', amount: '45.20', description: 'Quota', date: day }, session });
     await app.close();
     app = null;
-    app = await fixture({ databasePath, adminPassword: 'a-different-password' });
+    app = await fixture({ databasePath, adminPassword: await hashPassword('a-different-password') });
     assert.equal((await app.request('/api/me', { session })).status, 200);
     const dashboard = (await app.request('/api/dashboard', { session })).data;
     assert.equal(dashboard.house.name, 'Casa Persistente');

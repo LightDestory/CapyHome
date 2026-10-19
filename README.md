@@ -95,7 +95,15 @@ The project uses the native `sqlite3` package. Do not disable dependency install
 
    On PowerShell, use `Copy-Item .env.example .env`.
 
-3. Edit `.env`. Replace `ADMIN_PASSWORD` with a unique password between 10 and 128 characters. The example password is deliberately rejected. `ADMIN_USERNAME` is also required on the first startup.
+3. Generate the administrator password SHA-256 hash and put it in `.env`:
+
+   ```sh
+   read -rsp 'Password: ' password; echo
+   printf '%s' "$password" | sha256sum | cut -d' ' -f1
+   unset password
+   ```
+
+   Paste the printed 64-character hex digest into `ADMIN_PASSWORD`.
 
 4. Install dependencies with Bun:
 
@@ -121,7 +129,7 @@ The project uses the native `sqlite3` package. Do not disable dependency install
    npm start
    ```
 
-6. Open [http://localhost:3000](http://localhost:3000) and sign in with the administrator credentials from `.env`.
+6. Open [http://localhost:3000](http://localhost:3000) and sign in with the administrator password you used to generate the hash.
 
 For automatic server restarts during development, use `bun run dev:bun` or `npm run dev`.
 
@@ -147,16 +155,16 @@ The language selector is available on the authentication screen and in the appli
 | `DATABASE_PATH` | `./data/capyhome.sqlite` | SQLite database path. Compose fixes it inside the persistent volume. |
 | `ADMIN_NAME` | `Amministratore` | Display name for the first administrator. Compose defaults this to `Admin`. |
 | `ADMIN_USERNAME` | None | Required username for the first administrator; 1–254 characters without whitespace. |
-| `ADMIN_PASSWORD` | None | Required initial password; 10–128 characters. |
+| `ADMIN_PASSWORD` | None | Required initial password SHA-256 hash; generate it with `sha256sum`. |
 | `TZ` | `Europe/Rome` | IANA time zone used for household dates and today's schedule. |
 | `COOKIE_SECURE` | `false` | Set to `true` when the public site uses HTTPS. |
 | `TRUST_PROXY` | `0` | Set to `1` only behind exactly one trusted reverse proxy. |
 
-Changing the administrator variables does not rename or reset an administrator after the database has been initialized.
+Changing the administrator variables does not rename or reset an administrator after the database has been initialized. The password hash is only read on first startup.
 
 #### Docker Compose
 
-The Dockerfile installs dependencies with `npm ci`, so ensure `package-lock.json` exists before building. If it is absent, generate it with `npm install`.
+The Dockerfile installs production dependencies with `npm ci` from the committed `package-lock.json`.
 
 ```sh
 docker compose up --build -d
@@ -203,7 +211,7 @@ For a consistent backup, stop CapyHome and copy the complete data directory or D
 
 - New registrations require administrator approval. Rejected and pending users cannot access household data.
 - The last approved administrator cannot be demoted or rejected.
-- Passwords use scrypt with random salts. Session tokens are stored as hashes and sent through HttpOnly, SameSite cookies.
+- Session tokens are stored as hashes and sent through HttpOnly, SameSite cookies.
 - Mutating API requests require JSON bodies and a CSRF token. Administrative endpoints require the administrator role.
 - Authentication rate limits are stored in memory and reset when the server restarts.
 - Internet-facing deployments should use an HTTPS reverse proxy and `COOKIE_SECURE=true`.

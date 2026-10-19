@@ -4,19 +4,20 @@ import { Op } from 'sequelize';
 import { transaction } from '../db.js';
 import { HttpError } from '../utils/http-error.js';
 import { username, password, text } from '../utils/validation.js';
-import { hashPassword, verifyPassword, randomToken, tokenHash } from '../utils/passwords.js';
+import { hashPassword, isPasswordHash, verifyPassword, randomToken, tokenHash } from '../utils/passwords.js';
 import { sessionDuration, cookieOptions, publicUser, readSessionToken } from '../utils/session.js';
 
 export async function bootstrapAdmin(db, config) {
   const { User } = db.models;
   if (await User.findOne({ where: { role: 'admin', status: 'approved' } })) return;
-  if (!config.adminUsername || !config.adminPassword || config.adminPassword === 'replace-with-a-long-unique-password') {
-    throw new Error('First startup requires ADMIN_USERNAME and a unique ADMIN_PASSWORD (10-128 characters).');
+  const adminPasswordHash = typeof config.adminPassword === 'string' ? config.adminPassword.trim() : '';
+  if (!config.adminUsername || !isPasswordHash(adminPasswordHash)) {
+    throw new Error('First startup requires ADMIN_USERNAME and ADMIN_PASSWORD set to a SHA-256 password hash. Generate one with: printf "%s" "your-password" | sha256sum | cut -d" " -f1');
   }
   await User.create({
     name: text(config.adminName || 'Amministratore', 'fields.name', 100),
     username: username(config.adminUsername),
-    passwordHash: await hashPassword(password(config.adminPassword)),
+    passwordHash: adminPasswordHash,
     role: 'admin', status: 'approved'
   });
 }
