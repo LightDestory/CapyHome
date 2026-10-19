@@ -5,7 +5,7 @@
 <div align="center">
 
   <a href="https://github.com/LightDestory/CapyHome">
-    <img src="https://raw.githubusercontent.com/LightDestory/CapyHome/master/.github/assets/images/presentation_image.png" alt="CapyHome capybara mascot" width="220">
+    <img src="https://raw.githubusercontent.com/LightDestory/CapyHome/master/.github/assets/images/presentation_image.png" alt="CapyHome capybara mascot" width="600">
   </a>
 
   <h2 align="center">CapyHome</h2>
