@@ -1,0 +1,25 @@
+services:
+  capyhome:
+    build: .
+    restart: unless-stopped
+    init: true
+    ports:
+      - "${PORT:-3000}:3000"
+    environment:
+      PORT: 3000
+      DATABASE_PATH: /app/data/capyhome.sqlite
+      ADMIN_NAME: ${ADMIN_NAME:-Admin}
+      ADMIN_USERNAME: ${ADMIN_USERNAME:?Set ADMIN_USERNAME in .env}
+      ADMIN_PASSWORD: ${ADMIN_PASSWORD:?Set ADMIN_PASSWORD in .env}
+      TZ: ${TZ:-Europe/Rome}
+      COOKIE_SECURE: ${COOKIE_SECURE:-false}
+      TRUST_PROXY: ${TRUST_PROXY:-0}
+    volumes:
+      - capyhome-data:/app/data
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - ALL
+
+volumes:
+  capyhome-data:

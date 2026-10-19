@@ -1,0 +1,28 @@
+{
+  "name": "capyhome",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Gestione collaborativa della casa con Express e SQLite",
+  "engines": {
+    "node": ">=24.0.0"
+  },
+  "scripts": {
+    "start": "node --env-file-if-exists=.env server/index.js",
+    "dev": "node --env-file-if-exists=.env --watch server/index.js",
+    "test": "node --test tests/*.test.js",
+    "start:bun": "bun server/index.js",
+    "dev:bun": "bun --watch server/index.js",
+    "test:bun": "bun test"
+  },
+  "dependencies": {
+    "express": "^5.3.0",
+    "express-rate-limit": "^8.7.1",
+    "helmet": "^8.3.0",
+    "sequelize": "^6.37.8",
+    "sqlite3": "^6.0.1"
+  },
+  "trustedDependencies": [
+    "sqlite3"
+  ]
+}

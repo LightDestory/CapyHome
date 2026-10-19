@@ -1,0 +1,27 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#f7f4eb">
+  <meta name="description" content="CapyHome: cleaning, recycling and shared fund. Your home, together.">
+  <title>CapyHome · Your home, together</title>
+  <link rel="stylesheet" href="/css/styles.css">
+  <script src="/js/i18n.js" defer></script>
+  <script src="/js/app.js" defer></script>
+</head>
+<body>
+  <a class="skip-link" href="#main">Skip to content</a>
+  <div id="app"><main id="main" class="boot" tabindex="-1"><span class="spinner" aria-hidden="true"></span><p role="status">Loading...</p></main></div>
+  <div id="announcer" class="sr-only" aria-live="polite" aria-atomic="true"></div>
+  <div id="toast" class="toast" role="status" hidden></div>
+  <dialog id="confirm-dialog" aria-labelledby="confirm-title" aria-describedby="confirm-description">
+    <form method="dialog">
+      <span class="eyebrow">A quick confirmation</span>
+      <h2 id="confirm-title">Are you sure?</h2>
+      <p id="confirm-description"></p>
+      <div class="actions"><button class="button secondary" value="cancel" autofocus>Cancel</button><button class="button danger" value="confirm">Confirm</button></div>
+    </form>
+  </dialog>
+</body>
+</html>
