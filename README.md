@@ -50,6 +50,7 @@ The main features are:
 - A common fund with contributions, expenses, exact cent-based calculations, and protection against overspending.
 - Paginated fund, cleaning, and waste histories, with selectable page sizes.
 - Administrator tools for approving housemates and managing the house, rooms, and waste schedule.
+- A dismissible cookie notice explaining that only essential cookies are used.
 - Italian and English interfaces, localized API messages, keyboard navigation, and accessible status messages.
 - Responsive layouts for mobile and desktop, accompanied by a rotating capybara mascot.
 

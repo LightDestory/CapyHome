@@ -5,6 +5,8 @@
   const announcer = document.querySelector('#announcer');
   const toast = document.querySelector('#toast');
   const dialog = document.querySelector('#confirm-dialog');
+  const cookieBanner = document.querySelector('#cookie-notice');
+  const cookieNotice = window.CapyCookieNotice;
   const i18n = window.CapyI18n;
   const t = (key, params) => i18n.t(key, params);
   const esc = value => String(value ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
@@ -70,6 +72,7 @@
   const dayChips = selected => `<div class="day-chips">${week.map(d => `<span class="day-chip ${selected.includes(d) ? 'selected' : ''}" aria-label="${h(selected.includes(d) ? 'waste.scheduled' : 'waste.notScheduled', { name: dayName(d) })}">${esc(dayName(d, true))}</span>`).join('')}</div>`;
   const languagePicker = () => `<label class="language-picker"><span class="sr-only">${h('common.language')}</span><select data-language aria-label="${h('common.language')}" ${state.switching ? 'disabled' : ''}><option value="it" lang="it" ${i18n.language === 'it' ? 'selected' : ''}>Italiano</option><option value="en" lang="en" ${i18n.language === 'en' ? 'selected' : ''}>English</option></select></label>`;
   let toastTimer;
+  let cookieBound = false;
   function notify(message) {
     clearTimeout(toastTimer);
     toast.textContent = message;
@@ -88,6 +91,19 @@
     dialog.querySelector('#confirm-description').textContent = '';
     toast.hidden = true;
     announcer.textContent = '';
+    if (cookieBanner && cookieNotice) {
+      const closeButton = cookieBanner.querySelector('[data-cookie-close]');
+      cookieBanner.querySelector('#cookie-notice-title').textContent = t('cookies.title');
+      cookieBanner.querySelector('#cookie-notice-message').textContent = t('cookies.message');
+      closeButton.textContent = t('cookies.close');
+      closeButton.setAttribute('aria-label', t('cookies.closeLabel'));
+      if (!cookieBound) {
+        cookieBound = true;
+        cookieNotice.init({ banner: cookieBanner, closeButton });
+      } else {
+        cookieNotice.show({ banner: cookieBanner });
+      }
+    }
   }
   async function api(path, options = {}) {
     const method = options.method || 'GET';

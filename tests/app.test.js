@@ -75,7 +75,9 @@ test('serves the SPA with security headers, health, and protected API endpoints'
   assert.equal(page.headers.get('x-content-type-options'), 'nosniff');
   assert.equal(page.headers.get('x-powered-by'), null);
   assert.equal((await app.request('/js/app.js')).status, 200);
+  assert.equal((await app.request('/js/cookie-notice.js')).status, 200);
   assert.equal((await app.request('/css/styles.css')).status, 200);
+  assert.match(page.data, /id="cookie-notice"/);
   assert.deepEqual((await app.request('/api/health')).data, { status: 'ok' });
   for (const path of ['/api/me', '/api/dashboard', '/api/cleaning', '/api/waste', '/api/fund', '/api/admin/settings', '/api/admin/users']) {
     assert.equal((await app.request(path)).status, 401, path);

@@ -8,11 +8,19 @@
   <title>CapyHome · Your home, together</title>
   <link rel="stylesheet" href="/css/styles.css">
   <script src="/js/i18n.js" defer></script>
+  <script src="/js/cookie-notice.js" defer></script>
   <script src="/js/app.js" defer></script>
 </head>
 <body>
   <a class="skip-link" href="#main">Skip to content</a>
   <div id="app"><main id="main" class="boot" tabindex="-1"><span class="spinner" aria-hidden="true"></span><p role="status">Loading...</p></main></div>
+  <aside id="cookie-notice" class="cookie-notice" aria-labelledby="cookie-notice-title" hidden>
+    <div class="cookie-notice-copy">
+      <h2 id="cookie-notice-title"></h2>
+      <p id="cookie-notice-message"></p>
+    </div>
+    <button class="button secondary small" type="button" data-cookie-close></button>
+  </aside>
   <div id="announcer" class="sr-only" aria-live="polite" aria-atomic="true"></div>
   <div id="toast" class="toast" role="status" hidden></div>
   <dialog id="confirm-dialog" aria-labelledby="confirm-title" aria-describedby="confirm-description">
