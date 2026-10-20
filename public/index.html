@@ -1,19 +1,55 @@
 <!doctype html>
 <html lang="en">
+
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="theme-color" content="#f7f4eb">
   <meta name="description" content="CapyHome: cleaning, recycling and shared fund. Your home, together.">
   <title>CapyHome · Your home, together</title>
+  <!-- Open Graph -->
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="CapyHome">
+  <meta property="og:title" content="CapyHome · Your home, together">
+  <meta property="og:description" content="CapyHome: cleaning, recycling and shared fund. Your home, together.">
+  <meta property="og:image" content="img/og-image.png">
+  <meta property="og:image:alt" content="CapyHome capybara mascot">
+  <meta property="og:locale" content="en_US">
+  <meta property="og:locale:alternate" content="it_IT">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="CapyHome · Your home, together">
+  <meta name="twitter:description" content="CapyHome: cleaning, recycling and shared fund. Your home, together.">
+  <meta name="twitter:image" content="img/og-image.png">
+  <meta name="twitter:image:alt" content="CapyHome capybara mascot">
   <link rel="stylesheet" href="/css/styles.css">
   <script src="/js/i18n.js" defer></script>
   <script src="/js/cookie-notice.js" defer></script>
   <script src="/js/app.js" defer></script>
+  <link rel="apple-touch-icon" sizes="57x57" href="img/favicons/apple-icon-57x57.png">
+  <link rel="apple-touch-icon" sizes="60x60" href="img/favicons/apple-icon-60x60.png">
+  <link rel="apple-touch-icon" sizes="72x72" href="img/favicons/apple-icon-72x72.png">
+  <link rel="apple-touch-icon" sizes="76x76" href="img/favicons/apple-icon-76x76.png">
+  <link rel="apple-touch-icon" sizes="114x114" href="img/favicons/apple-icon-114x114.png">
+  <link rel="apple-touch-icon" sizes="120x120" href="img/favicons/apple-icon-120x120.png">
+  <link rel="apple-touch-icon" sizes="144x144" href="img/favicons/apple-icon-144x144.png">
+  <link rel="apple-touch-icon" sizes="152x152" href="img/favicons/apple-icon-152x152.png">
+  <link rel="apple-touch-icon" sizes="180x180" href="img/favicons/apple-icon-180x180.png">
+  <link rel="icon" type="image/png" sizes="192x192" href="img/favicons/android-icon-192x192.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="img/favicons/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="96x96" href="img/favicons/favicon-96x96.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="img/favicons/favicon-16x16.png">
+  <link rel="manifest" href="img/favicons/manifest.json">
+  <meta name="msapplication-TileColor" content="#f7f4eb">
+  <meta name="msapplication-TileImage" content="img/favicons/ms-icon-144x144.png">
 </head>
+
 <body>
   <a class="skip-link" href="#main">Skip to content</a>
-  <div id="app"><main id="main" class="boot" tabindex="-1"><span class="spinner" aria-hidden="true"></span><p role="status">Loading...</p></main></div>
+  <div id="app">
+    <main id="main" class="boot" tabindex="-1"><span class="spinner" aria-hidden="true"></span>
+      <p role="status">Loading...</p>
+    </main>
+  </div>
   <aside id="cookie-notice" class="cookie-notice" aria-labelledby="cookie-notice-title" hidden>
     <div class="cookie-notice-copy">
       <h2 id="cookie-notice-title"></h2>
@@ -28,8 +64,10 @@
       <span class="eyebrow">A quick confirmation</span>
       <h2 id="confirm-title">Are you sure?</h2>
       <p id="confirm-description"></p>
-      <div class="actions"><button class="button secondary" value="cancel" autofocus>Cancel</button><button class="button danger" value="confirm">Confirm</button></div>
+      <div class="actions"><button class="button secondary" value="cancel" autofocus>Cancel</button><button
+          class="button danger" value="confirm">Confirm</button></div>
     </form>
   </dialog>
 </body>
+
 </html>
