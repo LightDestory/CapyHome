@@ -25,6 +25,7 @@ button, input, textarea, select { font: inherit; }
 button, a, input, select, textarea, summary { -webkit-tap-highlight-color: transparent; }
 button, a { touch-action: manipulation; }
 button { cursor: pointer; }
+button, summary, .button, .segmented label, .day-picker label, .sidebar a, .badge { -webkit-user-select: none; user-select: none; }
 a { color: inherit; text-decoration: none; }
 button { color: inherit; }
 button:disabled { opacity: .55; cursor: not-allowed; }
