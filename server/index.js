@@ -5,7 +5,7 @@ if (!Number.isInteger(port) || port < 1 || port > 65535) throw new Error('PORT m
 
 try {
   const { app, db } = await createApp();
-  const server = app.listen(port, '0.0.0.0', () => console.log(`CapyHome listening on http://localhost:${port}`));
+  const server = app.listen(port, '0.0.0.0', () => console.log(`CapyHome listening on port ${port} from all interfaces`));
   server.on('error', async error => {
     console.error(error.message);
     await db.close();
