@@ -153,7 +153,7 @@ The language selector is available on the authentication screen and in the appli
 | Variable | Default | Description |
 | --- | --- | --- |
 | `PORT` | `3000` | Local HTTP port. In Compose, this controls the published host port. |
-| `DATABASE_PATH` | `./data/capyhome.sqlite` | SQLite database path. Compose fixes it inside the persistent volume. |
+| `DATABASE_PATH` | `./data/capyhome.sqlite` | SQLite database path. Compose uses `/app/data/capyhome.sqlite` inside the mounted `./data` directory. |
 | `ADMIN_NAME` | `Amministratore` | Display name for the first administrator. Compose defaults this to `Admin`. |
 | `ADMIN_USERNAME` | None | Required username for the first administrator; 1–254 characters without whitespace. |
 | `ADMIN_PASSWORD` | None | Required initial password SHA-256 hash; generate it with `sha256sum`. |
@@ -172,7 +172,14 @@ docker compose up --build -d
 docker compose logs -f capyhome
 ```
 
-Compose publishes the application on `PORT`, stores the database in the `capyhome-data` volume, runs the container without root privileges, and checks `/api/health` for service health.
+Compose publishes the application on `PORT`, stores the database in the host `./data` directory bind-mounted into the container, runs the container without root privileges, and checks `/api/health` for service health.
+
+The container runs as the unprivileged `node` user (uid and gid `1000`), so `./data` must be writable by that user. Docker creates the directory as `root` when it does not exist, which makes startup fail with `Cannot open the database at /app/data/capyhome.sqlite: SQLITE_CANTOPEN`. Prepare the directory before the first start:
+
+```sh
+mkdir -p data
+sudo chown -R 1000:1000 data
+```
 
 Stop the service without deleting its data:
 
@@ -180,7 +187,7 @@ Stop the service without deleting its data:
 docker compose down
 ```
 
-Do not run `docker compose down -v` unless you intentionally want to delete the household database.
+The database lives in `./data`, so removing the containers leaves it untouched. Delete that directory only when you intentionally want to remove the household database.
 
 #### Tests
 
@@ -206,7 +213,7 @@ The tests use temporary databases and ephemeral HTTP ports. They do not access t
 
 Sequelize creates the schema with `sync()` when a new database starts. The project does not use migrations, `force`, or `alter`, and does not promise compatibility with older database schemas.
 
-For a consistent backup, stop CapyHome and copy the complete data directory or Docker volume, including any `-wal` and `-shm` files. Restore the files while the service is stopped, preserve their permissions, and then restart the application. Backups contain household data and active sessions, so protect them like the original database.
+For a consistent backup, stop CapyHome and copy the complete `./data` directory or Docker volume, including any `-wal` and `-shm` files. Restore the files while the service is stopped, preserve their permissions, and then restart the application. Backups contain household data and active sessions, so protect them like the original database.
 
 #### Security and deployment
 
@@ -236,7 +243,7 @@ server/models/          Sequelize models and associations
 server/services/        Shared queries and mutations
 server/utils/           Validation, passwords, sessions, and HTTP errors
 tests/                  Integration and localization tests
-docker-compose.yaml     Single-service deployment and persistent volume
+docker-compose.yml      Single-service deployment with a host data directory
 ```
 
 The frontend and backend locale catalogs are separate. Keep the Italian and English key sets and interpolation parameters synchronized. Translation values must remain plain text rather than HTML.

@@ -13,15 +13,22 @@ export async function openDatabase(filename) {
     retry: { match: [/SQLITE_BUSY/], max: 5 }
   });
   const { House } = defineModels(db);
+  let connected = false;
   try {
     await db.authenticate();
+    connected = true;
     await db.query('PRAGMA journal_mode = WAL');
     await db.sync();
     await House.findOrCreate({ where: { id: 1 }, defaults: { name: 'La nostra casa' } });
     return db;
   } catch (error) {
-    await db.close();
-    throw error;
+    // A failed SQLite open leaves its handle registered, and closing such a handle never calls back.
+    // Only close a connection that opened, so the real startup error is reported instead of a hang.
+    if (connected) {
+      await db.close().catch(() => {});
+      throw error;
+    }
+    throw new Error(`Cannot open the database at ${filename}: ${error.message}. Make sure the directory exists and is writable by the user running CapyHome.`, { cause: error });
   }
 }
 

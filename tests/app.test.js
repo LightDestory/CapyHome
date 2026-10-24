@@ -1,7 +1,7 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { once } from 'node:events';
-import { mkdtempSync, rmSync } from 'node:fs';
+import { mkdirSync, mkdtempSync, rmSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { createApp } from '../server/app.js';
@@ -65,6 +65,20 @@ test('rejects a plaintext bootstrap password', async () => {
     createApp({ databasePath: ':memory:', adminUsername: credentials.username, adminPassword: credentials.password }),
     /SHA-256 password hash/
   );
+});
+
+test('reports a database that cannot be opened instead of hanging at startup', { timeout: 10000 }, async () => {
+  const directory = mkdtempSync(join(tmpdir(), 'capyhome-test-'));
+  const databasePath = join(directory, 'house.sqlite');
+  mkdirSync(databasePath);
+  try {
+    await assert.rejects(
+      createApp({ databasePath, adminUsername: credentials.username, adminPassword: await hashPassword(credentials.password) }),
+      error => error.message.includes(databasePath) && /writable/.test(error.message)
+    );
+  } finally {
+    rmSync(directory, { recursive: true, force: true });
+  }
 });
 
 test('serves the SPA with security headers, health, and protected API endpoints', () => withApp(async app => {
